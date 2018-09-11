@@ -91,7 +91,7 @@ public class SniClientTest {
         SniClientJava8TestUtil.testSniClient(serverProvider, clientProvider, false);
     }
 
-    private static void testSniClient(SslProvider sslClientProvider, SslProvider sslServerProvider) throws Exception {
+    private static void testSniClient(SslProvider sslServerProvider, SslProvider sslClientProvider) throws Exception {
         String sniHostName = "sni.netty.io";
         LocalAddress address = new LocalAddress("test");
         EventLoopGroup group = new DefaultEventLoopGroup(1);
@@ -141,7 +141,8 @@ public class SniClientTest {
             Assert.assertNull(handler.engine().getHandshakeSession());
 
             if (PlatformDependent.javaVersion() >= 8) {
-                SniClientJava8TestUtil.assertSSLSession(handler.engine().getSession(), sniHostName);
+                SniClientJava8TestUtil.assertSSLSession(
+                        handler.engine().getUseClientMode(), handler.engine().getSession(), sniHostName);
             }
         } finally {
             if (cc != null) {
